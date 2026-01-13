@@ -4,6 +4,44 @@ import { loadFragment } from '../fragment/fragment.js';
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
+/**
+ * Determines the nav path based on the current page location.
+ * Uses the first 2 path segments if available, otherwise falls back to root.
+ * Examples:
+ *   /a -> /nav
+ *   /a/b -> /a/b/nav
+ *   /a/b/c/d/e -> /a/b/nav
+ * @returns {string} The nav path to use
+ */
+function getNavPath() {
+  const { pathname } = window.location;
+  const segments = pathname.split('/').filter(Boolean);
+
+  if (segments.length >= 2) {
+    // Use first 2 segments (e.g., /language-masters/en or /us/es)
+    return `/${segments[0]}/${segments[1]}/nav`;
+  }
+
+  // Fallback to root nav
+  return '/nav';
+}
+
+/**
+ * Loads the nav fragment.
+ * @param {string|null} navMeta Optional nav metadata override
+ * @returns {Promise<HTMLElement|null>} The loaded nav fragment
+ */
+async function loadNavFragment(navMeta) {
+  // If nav metadata is explicitly set, use it directly
+  if (navMeta) {
+    const navPath = new URL(navMeta, window.location).pathname;
+    return loadFragment(navPath);
+  }
+
+  const navPath = getNavPath();
+  return loadFragment(navPath);
+}
+
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -108,10 +146,14 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // load nav as fragment
+  // load nav as fragment using hierarchical path resolution
   const navMeta = getMetadata('nav');
-  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+  const fragment = await loadNavFragment(navMeta);
+
+  if (!fragment) {
+    // No nav fragment found in any location
+    return;
+  }
 
   // decorate nav DOM
   block.textContent = '';
