@@ -161,18 +161,21 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['brand', 'sections', 'tools'];
+  const classes = ['sections', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) section.classList.add(`nav-${c}`);
   });
 
-  const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
-  if (brandLink) {
-    brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
-  }
+
+
+  // Add logo to the header
+  const logo = document.createElement('div');
+  logo.className = 'nav-logo';
+  logo.innerHTML = `<a href="/" aria-label="Home">
+    <img src="/images/logo.png" alt="Y-Walk" width="128" height="auto">
+  </a>`;
+  nav.prepend(logo);
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
