@@ -173,7 +173,7 @@ export default async function decorate(block) {
   const logo = document.createElement('div');
   logo.className = 'nav-logo';
   logo.innerHTML = `<a href="/" aria-label="Home">
-    <img src="/images/logo.png" alt="Y-Walk" width="128" height="auto">
+    <img src="/images/logo.png" alt="Y-Walk" width="166" height="auto">
   </a>`;
   nav.prepend(logo);
 
