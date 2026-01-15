@@ -6,11 +6,14 @@ const isDesktop = window.matchMedia('(min-width: 900px)');
 
 /**
  * Determines the nav path based on the current page location.
- * Uses the first 2 path segments if available, otherwise falls back to root.
+ * Uses hierarchical resolution - looks in parent directory of current page.
+ * For AEM paths like /content/site/language-masters/locale/page, looks for nav at locale level.
  * Examples:
  *   /a -> /nav
- *   /a/b -> /a/b/nav
- *   /a/b/c/d/e -> /a/b/nav
+ *   /a/b -> /a/b/nav (directory path)
+ *   /a/b/c -> /a/b/nav (page path)
+ *   /content/aem-xwalk/language-masters/en/our-journeys.html -> /content/aem-xwalk/language-masters/en/nav
+ *   /language-masters/en -> /language-masters/en/nav (directory/index path)
  * @returns {string} The nav path to use
  */
 function getNavPath() {
@@ -18,8 +21,18 @@ function getNavPath() {
   const segments = pathname.split('/').filter(Boolean);
 
   if (segments.length >= 2) {
-    // Use first 2 segments (e.g., /language-masters/en or /us/es)
-    return `/${segments[0]}/${segments[1]}/nav`;
+    const lastSegment = segments[segments.length - 1];
+    // Check if last segment looks like a page (has extension) or is a directory
+    const hasExtension = lastSegment.includes('.');
+    
+    if (hasExtension || pathname.endsWith('/')) {
+      // It's a page or explicitly ends with /, remove last segment to get parent directory
+      const navSegments = segments.slice(0, -1);
+      return `/${navSegments.join('/')}/nav`;
+    }
+    
+    // It's a directory path (like /language-masters/en), keep all segments
+    return `/${segments.join('/')}/nav`;
   }
 
   // Fallback to root nav
