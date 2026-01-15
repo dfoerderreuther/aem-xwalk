@@ -146,16 +146,6 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // Extract logo from block content (if provided)
-  const logoImg = block.querySelector('img');
-  let logoElement = null;
-  
-  if (logoImg) {
-    logoElement = logoImg.cloneNode(true);
-    logoElement.width = 166;
-    logoElement.setAttribute('height', 'auto');
-  }
-
   // load nav as fragment using hierarchical path resolution
   const navMeta = getMetadata('nav');
   const fragment = await loadNavFragment(navMeta);
@@ -171,22 +161,35 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['sections', 'tools'];
+  // Nav fragment now has 3 sections: logo, sections, tools
+  const classes = ['logo', 'sections', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) section.classList.add(`nav-${c}`);
   });
 
-  // Add logo to the header if provided
-  if (logoElement) {
-    const logo = document.createElement('div');
-    logo.className = 'nav-logo';
-    const logoLink = document.createElement('a');
-    logoLink.href = '/';
-    logoLink.setAttribute('aria-label', 'Home');
-    logoLink.appendChild(logoElement);
-    logo.appendChild(logoLink);
-    nav.prepend(logo);
+  // Decorate logo section
+  const navLogo = nav.querySelector('.nav-logo');
+  if (navLogo) {
+    const logoImg = navLogo.querySelector('img');
+    if (logoImg) {
+      logoImg.width = 166;
+      logoImg.setAttribute('height', 'auto');
+    }
+    const logoLink = navLogo.querySelector('a');
+    if (logoLink) {
+      logoLink.setAttribute('aria-label', 'Home');
+    } else {
+      // If no link exists, wrap the image in a link
+      const img = navLogo.querySelector('img');
+      if (img) {
+        const link = document.createElement('a');
+        link.href = '/';
+        link.setAttribute('aria-label', 'Home');
+        link.appendChild(img.cloneNode(true));
+        img.replaceWith(link);
+      }
+    }
   }
 
   const navSections = nav.querySelector('.nav-sections');

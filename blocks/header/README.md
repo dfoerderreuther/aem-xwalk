@@ -2,41 +2,45 @@
 
 The header block provides the main navigation and branding for the site.
 
-## Block Content
-
-### Logo
-
-To add a logo to the header, include an image in the header block content in your AEM document:
-
-| Header |
-|--------|
-| ![Logo](/images/logo.png) |
-
-The logo will automatically be:
-- Sized to 166px width
-- Linked to the homepage (/)
-- Positioned before the navigation menu
-- Given appropriate accessibility attributes
-
-### Navigation
+## Navigation Fragment Structure
 
 The header automatically loads the navigation from a fragment based on the current page path:
 - Pages at `/a/b/*` will load `/a/b/nav`
 - Pages at `/a` will load `/nav` (root)
 - You can override this with a `nav` metadata tag
 
-## Example
+### Nav Fragment Format
 
-In your document (e.g., in Word or Google Docs):
+The nav fragment should have **3 sections** in this order:
+
+1. **Logo** (first section)
+2. **Navigation links** (second section)
+3. **Search/Tools** (third section)
+
+## Example Nav Fragment
+
+Create a document at `/language-masters/en/nav` with the following structure:
 
 ```
----
-Header
-![Y-Walk Logo](/images/logo.png)
----
+| Logo Section |
+| ![Y-Walk Logo](/images/logo.png) |
+
+| Navigation Section |
+| - [Home](/)
+  - [About](/about)
+  - [Contact](/contact) |
+
+| Search Section |
+| [Search](/search) |
 ```
 
-This will render the logo in the header, which can be managed as an AEM asset.
+## Logo Configuration
+
+The logo in the first section will automatically be:
+- Sized to 166px width
+- Linked to the homepage (/) if not already linked
+- Given appropriate accessibility attributes
+- Positioned at the start of the header
 
 ## Customization
 
