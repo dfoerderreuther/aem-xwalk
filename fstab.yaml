@@ -1,5 +1,6 @@
 mountpoints:
   /:
-    url: "https://author-p90969-e1708313.adobeaemcloud.com//bin/franklin.delivery/dfoerderreuther/aem-xwalk/main"
+    #url: "https://author-p90969-e1708313.adobeaemcloud.com//bin/franklin.delivery/dfoerderreuther/aem-xwalk/main"
+    url: "https://localhost:8502//bin/franklin.delivery/dfoerderreuther/aem-xwalk/main"
     type: "markup"
     suffix: ".html"
