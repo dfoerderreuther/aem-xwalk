@@ -146,6 +146,16 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
+  // Extract logo from block content (if provided)
+  const logoImg = block.querySelector('img');
+  let logoElement = null;
+  
+  if (logoImg) {
+    logoElement = logoImg.cloneNode(true);
+    logoElement.width = 166;
+    logoElement.setAttribute('height', 'auto');
+  }
+
   // load nav as fragment using hierarchical path resolution
   const navMeta = getMetadata('nav');
   const fragment = await loadNavFragment(navMeta);
@@ -167,13 +177,17 @@ export default async function decorate(block) {
     if (section) section.classList.add(`nav-${c}`);
   });
 
-  // Add logo to the header
-  const logo = document.createElement('div');
-  logo.className = 'nav-logo';
-  logo.innerHTML = `<a href="/" aria-label="Home">
-    <img src="/images/logo.png" alt="Y-Walk" width="166" height="auto">
-  </a>`;
-  nav.prepend(logo);
+  // Add logo to the header if provided
+  if (logoElement) {
+    const logo = document.createElement('div');
+    logo.className = 'nav-logo';
+    const logoLink = document.createElement('a');
+    logoLink.href = '/';
+    logoLink.setAttribute('aria-label', 'Home');
+    logoLink.appendChild(logoElement);
+    logo.appendChild(logoLink);
+    nav.prepend(logo);
+  }
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
