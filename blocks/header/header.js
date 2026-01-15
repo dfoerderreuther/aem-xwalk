@@ -167,8 +167,6 @@ export default async function decorate(block) {
     if (section) section.classList.add(`nav-${c}`);
   });
 
-
-
   // Add logo to the header
   const logo = document.createElement('div');
   logo.className = 'nav-logo';
