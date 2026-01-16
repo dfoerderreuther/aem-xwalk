@@ -1,24 +1,40 @@
 /* header and nav layout */
 header .nav-wrapper {
-  background-color: var(--background-color);
+  background-color: white;
   width: 100%;
   z-index: 2;
   position: fixed;
+  height: calc(var(--nav-height) * 2);
+  transition: height 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+  overflow: visible;
+}
+
+header .nav-wrapper.scrolled {
+  height: var(--nav-height);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 10%);
 }
 
 header nav {
   box-sizing: border-box;
   display: grid;
   grid-template:
-    'hamburger logo brand tools' var(--nav-height)
+    'hamburger logo brand tools' calc(var(--nav-height) * 2)
     'sections sections sections sections' 1fr / auto auto 1fr auto;
   align-items: center;
   gap: 0 24px;
   margin: auto;
   max-width: 1248px;
-  height: var(--nav-height);
+  height: calc(var(--nav-height) * 2);
   padding: 0 24px;
   font-family: var(--body-font-family);
+  transition: height 0.3s ease-in-out;
+  overflow: visible;
+}
+
+header .nav-wrapper.scrolled nav {
+  height: var(--nav-height);
+  grid-template-rows: var(--nav-height) 1fr;
 }
 
 header nav[aria-expanded='true'] {
@@ -141,12 +157,17 @@ header .nav-logo {
   font-size: var(--heading-font-size-s);
   font-weight: 700;
   line-height: 1;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
 }
 
 header nav .nav-logo img {
-  width: 166px;
+  width: 240px;
   height: auto;
   display: block;
+  transition: width 0.3s ease-in-out;
+  max-height: none;
 }
 
 /* brand */
@@ -161,6 +182,10 @@ header .nav-brand {
 header nav .nav-brand img {
   width: 128px;
   height: auto;
+}
+
+header .nav-wrapper.scrolled .nav-logo img {
+  width: 166px;
 }
 
 /* sections */
@@ -234,13 +259,36 @@ header nav .nav-sections ul > li > ul > li {
 
   header nav .nav-sections ul {
     display: flex;
-    gap: 24px;
+    gap: 8px;
     margin: 0;
+    align-items: center;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
     flex: 0 1 auto;
     position: relative;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > a {
+    display: block;
+    padding: 12px 24px;
+    border-radius: 8px 8px 0 0;
+    background-color: transparent;
+    transition: all 0.2s ease-in-out;
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > a:hover {
+    background-color: var(--light-color);
+    text-decoration: none;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li > a[aria-current="page"],
+  header nav .nav-sections .default-content-wrapper > ul > li > a.active {
+    background-color: var(--light-color);
+    border-bottom-color: var(--link-color);
+    font-weight: 600;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li > ul {

@@ -73,7 +73,7 @@
 body {
   display: none;
   margin: 0;
-  background-color: var(--background-color);
+  background-color: var(--light-color);
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
@@ -85,7 +85,7 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  height: calc(var(--nav-height) * 2);
 }
 
 header .header,
@@ -107,9 +107,10 @@ h6 {
   margin-top: 0.8em;
   margin-bottom: 0.25em;
   font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.2;
   scroll-margin: 40px;
+  letter-spacing: -0.02em;
 }
 
 h1 { font-size: var(--heading-font-size-xxl); }
@@ -142,8 +143,8 @@ pre {
   white-space: pre;
 }
 
-main > div {
-  margin: 40px 16px;
+main {
+  background-color: var(--light-color);
 }
 
 input,
@@ -230,28 +231,45 @@ main img {
 /* sections */
 main > .section {
   margin: 40px 0;
+  background-color: transparent;
 }
 
 main > .section > div {
   max-width: 1200px;
   margin: auto;
-  padding: 0 24px;
+}
+
+main > .section > div:not(.hero-wrapper) {
+  padding: 40px 24px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 5%);
 }
 
 main > .section:first-of-type {
   margin-top: 0;
 }
 
+main > .section.hero-container {
+  margin: 0;
+  background-color: transparent;
+}
+
 @media (width >= 900px) {
-  main > .section > div {
-    padding: 0 32px;
+  main > .section > div:not(.hero-wrapper) {
+    padding: 40px 32px;
   }
 }
 
 /* section metadata */
 main .section.light,
 main .section.highlight {
-  background-color: var(--light-color);
+  background-color: transparent;
   margin: 0;
   padding: 40px 0;
+}
+
+main .section.light > div,
+main .section.highlight > div {
+  background-color: var(--light-color);
 }

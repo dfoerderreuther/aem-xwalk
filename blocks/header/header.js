@@ -6,32 +6,34 @@ const isDesktop = window.matchMedia('(min-width: 900px)');
 
 /**
  * Determines the nav path based on the current page location.
- * Uses hierarchical resolution - looks in parent directory of current page.
- * For AEM paths like /content/site/language-masters/locale/page, looks for nav at locale level.
+ * Uses hierarchical resolution - looks for nav at the locale level.
+ * For AEM paths like /language-masters/locale/page, looks for nav at locale level.
  * Examples:
  *   /a -> /nav
- *   /a/b -> /a/b/nav (directory path)
- *   /a/b/c -> /a/b/nav (page path)
- *   /content/aem-xwalk/language-masters/en/our-journeys.html -> /content/aem-xwalk/language-masters/en/nav
- *   /language-masters/en -> /language-masters/en/nav (directory/index path)
+ *   /language-masters/en -> /language-masters/en/nav (locale root)
+ *   /language-masters/en/about -> /language-masters/en/nav (subpage)
+ *   /language-masters/en/our-journeys -> /language-masters/en/nav (subpage)
  * @returns {string} The nav path to use
  */
 function getNavPath() {
   const { pathname } = window.location;
   const segments = pathname.split('/').filter(Boolean);
 
-  if (segments.length >= 2) {
-    const lastSegment = segments[segments.length - 1];
-    // Check if last segment looks like a page (has extension) or is a directory
-    const hasExtension = lastSegment.includes('.');
-    
-    if (hasExtension || pathname.endsWith('/')) {
-      // It's a page or explicitly ends with /, remove last segment to get parent directory
-      const navSegments = segments.slice(0, -1);
-      return `/${navSegments.join('/')}/nav`;
-    }
-    
-    // It's a directory path (like /language-masters/en), keep all segments
+  // Remove .html extension if present
+  if (segments.length > 0) {
+    const lastIdx = segments.length - 1;
+    segments[lastIdx] = segments[lastIdx].replace(/\.html$/, '');
+  }
+
+  if (segments.length >= 3) {
+    // For paths like /language-masters/en/about, use /language-masters/en/nav
+    // Take the first two segments (language-masters/locale)
+    const navSegments = segments.slice(0, 2);
+    return `/${navSegments.join('/')}/nav`;
+  }
+
+  if (segments.length === 2) {
+    // For paths like /language-masters/en, use /language-masters/en/nav
     return `/${segments.join('/')}/nav`;
   }
 
@@ -216,6 +218,19 @@ export default async function decorate(block) {
           navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         }
       });
+
+      // Mark active page
+      const link = navSection.querySelector('a');
+      if (link) {
+        const linkPath = new URL(link.href).pathname;
+        const currentPath = window.location.pathname;
+        if (linkPath === currentPath
+          || (currentPath.endsWith('.html') && linkPath === currentPath.replace('.html', ''))
+          || (linkPath.endsWith('.html') && currentPath === linkPath.replace('.html', ''))) {
+          link.classList.add('active');
+          link.setAttribute('aria-current', 'page');
+        }
+      }
     });
   }
 
@@ -236,4 +251,18 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // Handle scroll to shrink header
+  const handleScroll = () => {
+    const { scrollY } = window;
+    if (scrollY > 50) {
+      navWrapper.classList.add('scrolled');
+    } else {
+      navWrapper.classList.remove('scrolled');
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  // Initial check
+  handleScroll();
 }
