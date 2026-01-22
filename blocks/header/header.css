@@ -328,3 +328,138 @@ header nav .nav-sections ul > li > ul > li {
 header nav .nav-tools {
   grid-area: tools;
 }
+
+/* language navigation */
+header nav .nav-lang {
+  position: relative;
+  margin-left: auto;
+}
+
+header nav .nav-lang-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--text-color);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--body-font-size-xs);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+header nav .nav-lang-trigger:hover {
+  background: var(--light-color);
+}
+
+header nav .nav-lang-trigger svg {
+  flex-shrink: 0;
+}
+
+header nav .nav-lang-label {
+  display: none;
+}
+
+@media (width >= 900px) {
+  header nav .nav-lang-label {
+    display: inline;
+  }
+}
+
+header nav .nav-lang-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 20%);
+  z-index: 100;
+  padding: 16px 0;
+  overflow: hidden;
+}
+
+header nav .nav-lang-dropdown.open {
+  display: block;
+}
+
+/* Reset all lists in dropdown */
+header nav .nav-lang-dropdown ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Country items (top-level li) - account for wrapper div */
+header nav .nav-lang-dropdown > div > ul > li,
+header nav .nav-lang-dropdown > ul > li {
+  padding: 8px 20px;
+}
+
+header nav .nav-lang-dropdown > div > ul > li:not(:first-child),
+header nav .nav-lang-dropdown > ul > li:not(:first-child) {
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
+/* Country name (paragraph inside li) */
+header nav .nav-lang-dropdown li > p {
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  color: #888 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  line-height: 1.4 !important;
+}
+
+/* Language list inside each country */
+header nav .nav-lang-dropdown li > ul {
+  margin-left: -20px !important;
+  margin-right: -20px !important;
+}
+
+/* Language links - clearly indented */
+header nav .nav-lang-dropdown li > ul > li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+header nav .nav-lang-dropdown li > ul > li a {
+  display: block !important;
+  padding: 10px 24px 10px 44px !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  line-height: 1.4 !important;
+  transition: background 0.15s ease;
+}
+
+header nav .nav-lang-dropdown li > ul > li a:hover {
+  background: #f0f0f0 !important;
+  text-decoration: none !important;
+}
+
+/* Mobile: lang nav inside hamburger menu */
+@media (width < 900px) {
+  header nav[aria-expanded='true'] .nav-lang {
+    order: 10;
+    margin: 16px 0;
+    width: 100%;
+  }
+
+  header nav[aria-expanded='true'] .nav-lang-dropdown {
+    position: static;
+    box-shadow: none;
+    border: 1px solid var(--light-color);
+    margin-top: 8px;
+  }
+}

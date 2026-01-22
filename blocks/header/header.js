@@ -57,6 +57,81 @@ async function loadNavFragment(navMeta) {
   return loadFragment(navPath);
 }
 
+/**
+ * Loads and decorates the language navigation dropdown
+ * @param {Element} nav The nav element to append the language nav to
+ */
+async function loadLangNav(nav) {
+  const langNavPath = '/lang-nav.plain.html';
+  try {
+    const resp = await fetch(langNavPath);
+    if (!resp.ok) {
+      // eslint-disable-next-line no-console
+      console.warn('Lang nav not found at', langNavPath);
+      return;
+    }
+
+    const html = await resp.text();
+
+    // Create container
+    const langNav = document.createElement('div');
+    langNav.className = 'nav-lang';
+
+    // Create the dropdown trigger button
+    const trigger = document.createElement('button');
+    trigger.className = 'nav-lang-trigger';
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-label', 'Select language');
+    trigger.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+      </svg>
+      <span class="nav-lang-label">Language</span>
+    `;
+
+    // Create dropdown and parse HTML
+    const dropdown = document.createElement('div');
+    dropdown.className = 'nav-lang-dropdown';
+    dropdown.innerHTML = html;
+
+    // Build final structure
+    langNav.appendChild(trigger);
+    langNav.appendChild(dropdown);
+
+    // Toggle dropdown on click
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      dropdown.classList.toggle('open', !expanded);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!langNav.contains(e.target)) {
+        trigger.setAttribute('aria-expanded', 'false');
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape') {
+        trigger.setAttribute('aria-expanded', 'false');
+        dropdown.classList.remove('open');
+      }
+    });
+
+    nav.appendChild(langNav);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error loading lang nav:', error);
+  }
+}
+
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -251,6 +326,9 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // Load language navigation dropdown
+  await loadLangNav(nav);
 
   // Handle scroll to shrink header
   const handleScroll = () => {
